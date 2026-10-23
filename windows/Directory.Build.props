@@ -1,0 +1,64 @@
+<Project>
+  <!-- Shared properties of Helper\LSXIIVolumeFixer.csproj and Tests\ConfigTests.csproj (docs/DESIGN.md §10.5, §12). -->
+
+  <PropertyGroup>
+    <!-- All build output lives under build\, like the Makefile's build/ (make.cmd clean removes it).
+         Final results (LSXIIVolumeFixer.exe, config-tests.exe) are published straight into build\ by make.ps1;
+         intermediate files go to build\obj\<project>\ and build\bin\<project>\.
+         MAX_PATH (§10.6): only if the long windows\ path breaks the build (O18), LsxBuildRoot moves to
+         $(LOCALAPPDATA)\lsxb\ (A38). -->
+    <LsxBuildRoot>$(MSBuildThisFileDirectory)build\</LsxBuildRoot>
+    <BaseOutputPath>$(LsxBuildRoot)bin\$(MSBuildProjectName)\</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(LsxBuildRoot)obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <!-- O18 (measured 2026-10-19 with long paths disabled, the Windows default, and a 164-character windows\ path): the build itself copes with the
+         long path. With the SDK's default ...\Release\net10.0-windows10.0.22000.0\win-x64\ segments under build\obj\
+         both projects publish, incremental rebuilds too, with intermediate files of up to 294 characters; so
+         %LOCALAPPDATA%\lsxb\ (A38) is not needed. PowerShell 5.1 and Explorer do not cope (files from 260, folders
+         from 248 characters, §10.6). One target framework and the native RID only, so the two segments are
+         dropped: the longest file under build\ then has 258 characters, the longest folder 206. -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Downloads from nuget.org only for the WinRT projection (Microsoft.Windows.SDK.NET.Ref, §10.5). Without these
+         two, `-r <RID>` also fetches the NETCore, WindowsDesktop and AspNetCore runtime packs (≈ 320 MB, unused by a
+         framework-dependent app) and PublishSingleFile fetches Microsoft.NET.ILLink.Tasks for the single-file
+         analyzer (measured 2026-10-19). Without the analyzer IL3000/IL3001 stay silent: in the single-file exe
+         Assembly.Location is "", so code that needs the exe path (launcher, install, update) uses
+         Environment.ProcessPath or AppContext.BaseDirectory, never Assembly.Location or CodeBase. -->
+    <EnableRuntimePackDownload>false</EnableRuntimePackDownload>
+    <EnableSingleFileAnalyzer>false</EnableSingleFileAnalyzer>
+    <!-- NuGetAudit (on by default) fetches nuget.org's vulnerability data on every restore that is not a no-op
+         (measured 2026-10-22: vuln_*.dat in the HTTP cache). There are no package references to audit; the build
+         sends nothing (A72). -->
+    <NuGetAudit>false</NuGetAudit>
+    <!-- The projection's version is chosen by the SDK (BundledVersions.props of SDK 10.0.402: 10.0.22000.0 ->
+         10.0.22000.57) and changes with SDK servicing, which global.json's rollForward allows; each change would be a
+         new download and leave the old package behind. Pinned; raised on purpose only. -->
+    <WindowsSdkPackageVersion>10.0.22000.57</WindowsSdkPackageVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- P/Invoke (LibraryImport) and, from M2, the COM source generator ([GeneratedComInterface]). -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Deterministic>true</Deterministic>
+    <!-- One file per result in build\ (no .pdb next to the exe). -->
+    <DebugType>embedded</DebugType>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <!-- No git (docs/DESIGN.md §1): nothing to append to the informational version. -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+    <!-- Globalization stays on: L() reads the UI culture (§7.3). Numbers in logs and settings use
+         CultureInfo.InvariantCulture explicitly (§9). -->
+    <InvariantGlobalization>false</InvariantGlobalization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Swift has module-level globals (appName, suiteName, log(), L() …) in Config.swift. C# keeps them in the
+         static class Globals (Helper\Config.cs); this import lets every file call them unqualified. -->
+    <Using Include="Globals" Static="true" />
+  </ItemGroup>
+</Project>
