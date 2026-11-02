@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Pure-function tests (docs/DESIGN.md §11.1). Like the Makefile's test binary, built from Helper\Config.cs and
+       Helper\SpeakerDiscovery.cs only, plus the tests; `make.cmd test` publishes it as build\config-tests.exe. -->
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <!-- Same target as the helper (≙ the shared SWIFTFLAGS): SpeakerDiscovery.cs uses the WinRT projection from M1. -->
+    <TargetFramework>net10.0-windows10.0.22000.0</TargetFramework>
+    <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
+    <AssemblyName>config-tests</AssemblyName>
+    <RootNamespace>ConfigTests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Helper\Config.cs" Link="Helper\Config.cs" />
+    <Compile Include="..\Helper\SpeakerDiscovery.cs" Link="Helper\SpeakerDiscovery.cs" />
+  </ItemGroup>
+</Project>

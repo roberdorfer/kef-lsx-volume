@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- ≙ Helper/Info.plist (docs/DESIGN.md §12). Built by `make.cmd helper` into build\LSXIIVolumeFixer.exe. -->
+
+  <PropertyGroup>
+    <!-- WinExe ≙ LSUIElement: no window, no taskbar button. -->
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.22000.0</TargetFramework>
+    <!-- Windows 11; this only drives the platform analyzer (CA1416). The minimum version itself
+         (≙ LSMinimumSystemVersion) is a start-up check in launcher and agent (A71, M5). -->
+    <SupportedOSPlatformVersion>10.0.22000.0</SupportedOSPlatformVersion>
+    <UseWindowsForms>true</UseWindowsForms>
+    <!-- DPI only here, not also in the manifest (WFAC010). -->
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <AssemblyName>LSXIIVolumeFixer</AssemblyName>
+    <RootNamespace>LSXIIVolumeFixer</RootNamespace>
+    <AssemblyTitle>LSX II Volume Fixer</AssemblyTitle>
+    <Product>LSX II Volume Fixer</Product>
+    <Version>1.0</Version>
+    <FileVersion>1.0.0.1</FileVersion>
+    <Copyright>MIT</Copyright>
+  </PropertyGroup>
+</Project>

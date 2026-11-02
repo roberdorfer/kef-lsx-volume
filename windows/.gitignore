@@ -1,0 +1,6 @@
+# Build output of make.cmd / make.ps1 (all intermediate and final files live under build\)
+build/
+bin/
+obj/
+.vs/
+*.user
