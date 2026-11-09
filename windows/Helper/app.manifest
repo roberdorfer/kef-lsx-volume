@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- docs/DESIGN.md §12: only asInvoker (never elevated, also for admins) and the supportedOS GUID shared by
+     Windows 10 and 11 (Windows 11 has none of its own). DPI awareness comes from ApplicationHighDpiMode. -->
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+    <security>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+    </application>
+  </compatibility>
+</assembly>
